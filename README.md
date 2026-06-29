@@ -1,35 +1,35 @@
-# DarkCipher
+# SY-pherPad
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-v1.0.0-purple.svg)](https://github.com/SYN606/DarkCipher/releases/tag/v1.0.0)
-[![Issues](https://img.shields.io/github/issues/SYN606/DarkCipher.svg)](https://github.com/SYN606/DarkCipher/issues)
-[![Stars](https://img.shields.io/github/stars/SYN606/DarkCipher.svg?style=social)](https://github.com/SYN606/DarkCipher/stargazers)
-![Developer](https://img.shields.io/badge/developer-SYN-red.svg)
+[![Issues](https://img.shields.io/github/issues/SYN606/DarkCipher/issues)](https://github.com/SYN606/DarkCipher/issues)
+[![Stars](https://img.shields.io/github/stars/SYN606/DarkCipher?style=social)](https://github.com/SYN606/DarkCipher/stargazers)
+| [![Developer](https://img.shields.io/badge/developer-SYN%20606-red.svg)](https://github.com/SYN606)
 
-**DarkCipher** is a **Python-based AES-256-GCM** encryption tool for securely encrypting and decrypting text and files using a password.
+**SY-pherPad** is a secure, encrypted desktop notepad application built with Python and PyQt6. It leverages robust **AES-256-GCM** authenticated encryption to protect your sensitive text documents seamlessly behind password-based security keys.
 
-It uses modern cryptography with authenticated encryption, strong key derivation, and a versioned, self-describing encrypted blob format.
+The core cryptographic architecture relies on modern key derivation functions, unique initialization vectors per write session, and a custom, self-describing structured file container (`.dnote`).
+
 ---
 
 ## Features
 
-- AES-256-GCM (authenticated encryption)
-- PBKDF2-HMAC-SHA256 (default) & scrypt
-- Random salt (16B) and IV (12B)
-- Self-describing Base64 encrypted blob
-- Text & file encryption
-- CLI and PyQt6 GUI
-- Secure password input
+* **Authenticated Encryption:** Implements hardware-accelerated AES-256-GCM ensuring both confidentiality and tamper-proof data integrity.
+* **Strong Key Derivation:** Supports adaptive password hashing via `scrypt` (default) and `PBKDF2-HMAC-SHA256` using secure, cryptographically random salts (16-byte).
+* **Native GUI Interface:** A clean, modern desktop editing environment managed via PyQt6.
+* **Find and Replace Subsystem:** Advanced, non-blocking modeless search utility supporting Wrap Around mapping, case-sensitivity switches, and global bulk text replacements.
+* **Dynamic Key Management:** Built-in settings interface allowing full document re-encryption when modifying or rotating document security keys.
+* **Self-Describing Formats:** Saves directly into a custom packaged `.dnote` binary format embedded with metadata tags describing the KDF engine used.
 
 ---
 
-## Installation
+## For Development
 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/SYN606/DarkCipher.git
+    git clone https://github.com/SYN606/SY-pher-Pad.git
     cd DarkCipher
     ```
 
@@ -37,7 +37,8 @@ It uses modern cryptography with authenticated encryption, strong key derivation
 
     ```bash
     python -m venv venv
-    source venv/bin/activate  # On Windows use 'venv\Scripts\activate'
+    source venv/bin/activate  # On Windows use
+    venv\Scripts\activate
     ```
 
 3. Install dependencies:
@@ -52,20 +53,11 @@ It uses modern cryptography with authenticated encryption, strong key derivation
 
 **Encrypt a text or file:**
 
-```python
-python cli/main.py -e -t "secret"
-python cli/main.py -e -f file.txt
-```
-
-**Decrypt a text or file:**
+This will run the GUI
 
 ```python
-python cli/main.py -d -t "<blob>"
-python cli/main.py -d -f file.txt.enc
+python main.py
 ```
-
-- You will be prompted securely for a password.
-
 ---
 
 ## Contributing

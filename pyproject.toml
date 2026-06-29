@@ -1,11 +1,47 @@
 [project]
-name = "encryption"
+name = "SY-pherPad"
 version = "0.1.0"
-description = "Add your description here"
+description = "AES-256-GCM encrypted secure notepad for Windows."
 readme = "README.md"
 requires-python = ">=3.13"
+
+authors = [
+    { name = "SYN 606" }
+]
+
+keywords = [
+    "encryption",
+    "aes",
+    "aes-gcm",
+    "cryptography",
+    "notepad",
+    "secure-notes",
+    "desktop",
+    "pyqt6",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Text Editors",
+]
+
 dependencies = [
-    "colorama>=0.4.6",
     "cryptography>=45.0.7",
-    "pyqt6>=6.10.0",
+    "PyQt6>=6.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.4",
+    "pyinstaller>=6.16.0",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
 ]
