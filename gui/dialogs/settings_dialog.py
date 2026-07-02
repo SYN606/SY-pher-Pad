@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QPushButton, QMessageBox, QWidget
-from gui.password_dialog import PasswordDialog, PasswordMode
+from gui.dialogs.password_dialog import PasswordDialog, PasswordMode
 from editor.document import SecureDocument
 
 
