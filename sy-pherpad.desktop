@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SY-pherPad
+Exec=SY-pherPad
+Icon=sy-pherpad
+Comment=Secure encrypted notepad.
+Categories=Utility;TextEditor;
+Terminal=false

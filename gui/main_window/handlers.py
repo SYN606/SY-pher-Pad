@@ -197,7 +197,7 @@ class WindowHandlers:
         QMessageBox.about(
             self.window, "About SY-pherPad",
             ("<h2>SY-pherPad</h2>"
-             "<p><b>Version:</b> 1.0</p>"
+             "<p><b>Version:</b> 1.0.1</p>"
              "<p>Secure encrypted notepad.</p>"
              "<p><b>Developer:</b> SYN 606</p>"
              "<p><b>Source Code:</b><br>"
