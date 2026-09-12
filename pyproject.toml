@@ -1,6 +1,6 @@
 [project]
 name = "SY-pherPad"
-version = "1.0.1"
+version = "1.1.0"
 description = "AES-256-GCM encrypted secure notepad for Windows."
 readme = "README.md"
 requires-python = ">=3.13"
@@ -44,6 +44,9 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
+]
+pythonpath = [
+    ".",
 ]
 
 [dependency-groups]

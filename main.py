@@ -25,7 +25,7 @@ def main() -> None:
     # Register global metadata identities for automatic cross-platform QSettings persistence
     QCoreApplication.setOrganizationName("SYN 606")
     QCoreApplication.setApplicationName("SY-pherPad")
-    QCoreApplication.setApplicationVersion("1.0")
+    QCoreApplication.setApplicationVersion("1.1.0")
 
     # Configure shared window context iconography
     app_icon = QIcon(get_resource_path("icons/app_icon.ico"))
@@ -33,6 +33,12 @@ def main() -> None:
     window = MainWindow()
     window.setWindowIcon(app_icon)
     window.show()
+
+    # Handle file path passed from command line / Windows "Open with" / double click
+    if len(sys.argv) > 1:
+        target_file = Path(sys.argv[1])
+        if target_file.exists() and target_file.is_file():
+            window.handlers.open_file_path(target_file)
 
     sys.exit(app.exec())
 

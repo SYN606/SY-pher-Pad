@@ -13,12 +13,13 @@ class FileManager:
     def __init__(self, parent: QWidget | None = None) -> None:
         self.parent = parent
 
-    def open_file(self) -> Path | None:
+    def open_file(self, default_dir: Path | None = None) -> Path | None:
         """Spawns an interactive window overlay optimized to fetch target record files."""
+        initial = str(default_dir) if default_dir else ""
         filename, _ = QFileDialog.getOpenFileName(
             self.parent,
             "Open SY-pherPad Document",
-            "",
+            initial,
             self.FILE_FILTER,
         )
         if not filename:
@@ -31,12 +32,13 @@ class FileManager:
             return current
         return self.save_file_as()
 
-    def save_file_as(self) -> Path | None:
+    def save_file_as(self, current: Path | None = None) -> Path | None:
         """Determines export structural target details, enforcing explicit file extensions."""
+        initial = str(current) if current else ""
         filename, _ = QFileDialog.getSaveFileName(
             self.parent,
             "Save SY-pherPad Document",
-            "",
+            initial,
             self.FILE_FILTER,
         )
         if not filename:
@@ -46,3 +48,4 @@ class FileManager:
         if path.suffix.lower() != self.DEFAULT_EXTENSION:
             path = path.with_suffix(self.DEFAULT_EXTENSION)
         return path
+

@@ -20,6 +20,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from config.settings_manager import AppSettings
+from config.file_association import register_file_association, is_file_associated
 from editor.document import SecureDocument
 from gui.dialogs.password_dialog import PasswordDialog, PasswordMode
 
@@ -40,10 +42,9 @@ class SettingsDialog(QDialog):
 
         self.document = document
         self.main_window = window
-        self.settings = QSettings("SYN606", "SY-pherPad")
 
         self.setWindowTitle("Settings - SY-pherPad")
-        self.resize(480, 380)
+        self.resize(500, 420)
         self.setModal(True)
 
         self._build_ui()
@@ -95,18 +96,16 @@ class SettingsDialog(QDialog):
         self.tabs.addTab(font_tab, "Font")
 
         # ==============================================================
-        # Security Tab
+        # Security & System Tab
         # ==============================================================
 
         security_tab = QWidget()
         security_layout = QVBoxLayout(security_tab)
 
         security_group = QGroupBox("Security")
-
         group_layout = QVBoxLayout(security_group)
 
         self.btn_change_password = QPushButton("Change Document Password...")
-
         self.btn_change_password.clicked.connect(self._on_change_password)
 
         if self.document.file_path is None:
@@ -115,11 +114,27 @@ class SettingsDialog(QDialog):
                 "Save the document before changing its password.")
 
         group_layout.addWidget(self.btn_change_password)
-
         security_layout.addWidget(security_group)
+
+        # File Association Group
+        assoc_group = QGroupBox("System Integration")
+        assoc_layout = QVBoxLayout(assoc_group)
+
+        assoc_info = QLabel("Register SY-pherPad to open .dnote files on right-click or double-click.")
+        assoc_info.setWordWrap(True)
+        assoc_layout.addWidget(assoc_info)
+
+        self.btn_associate = QPushButton("Associate .dnote files with SY-pherPad")
+        self.btn_associate.clicked.connect(self._on_associate_files)
+        if is_file_associated():
+            self.btn_associate.setText("✓ .dnote files are already associated")
+            self.btn_associate.setEnabled(False)
+
+        assoc_layout.addWidget(self.btn_associate)
+        security_layout.addWidget(assoc_group)
         security_layout.addStretch()
 
-        self.tabs.addTab(security_tab, "Security")
+        self.tabs.addTab(security_tab, "Security & System")
 
         main_layout.addWidget(self.tabs)
 
@@ -157,38 +172,11 @@ class SettingsDialog(QDialog):
     # ------------------------------------------------------------------
 
     def _load_font_settings(self) -> None:
-
-        family = self.settings.value(
-            "font/family",
-            "Consolas",
-            str,
-        )
-
-        size = self.settings.value(
-            "font/size",
-            12,
-            int,
-        )
-
-        bold = self.settings.value(
-            "font/bold",
-            False,
-            bool,
-        )
-
-        italic = self.settings.value(
-            "font/italic",
-            False,
-            bool,
-        )
-
-        font = QFont(family)
-
+        font = AppSettings.load_editor_font()
         self.font_family.setCurrentFont(font)
-        self.font_size.setValue(size)
-        self.bold.setChecked(bold)
-        self.italic.setChecked(italic)
-
+        self.font_size.setValue(font.pointSize())
+        self.bold.setChecked(font.bold())
+        self.italic.setChecked(font.italic())
         self._update_preview()
 
     def _current_font(self) -> QFont:
@@ -202,41 +190,41 @@ class SettingsDialog(QDialog):
         self.preview.setFont(self._current_font())
 
     def apply_font_settings(self) -> None:
-
         font = self._current_font()
-
         self.main_window.editor.setFont(font)
-
-        self.settings.setValue(
-            "font/family",
-            font.family(),
-        )
-
-        self.settings.setValue(
-            "font/size",
-            font.pointSize(),
-        )
-
-        self.settings.setValue(
-            "font/bold",
-            font.bold(),
-        )
-
-        self.settings.setValue(
-            "font/italic",
-            font.italic(),
-        )
+        AppSettings.save_editor_font(font)
 
     def _accept(self) -> None:
         self.apply_font_settings()
         self.accept()
 
     # ------------------------------------------------------------------
+    # System Integration
+    # ------------------------------------------------------------------
+
+    def _on_associate_files(self) -> None:
+        success = register_file_association()
+        if success:
+            self.btn_associate.setText("✓ .dnote files associated successfully!")
+            self.btn_associate.setEnabled(False)
+            QMessageBox.information(
+                self,
+                "File Association",
+                "SY-pherPad is now registered for .dnote files.\n"
+                "You can now double-click or right-click any .dnote file to open it in SY-pherPad.",
+            )
+        else:
+            QMessageBox.warning(
+                self,
+                "File Association Failed",
+                "Could not register file association in Windows Registry.",
+            )
+
+    # ------------------------------------------------------------------
     # Password
     # ------------------------------------------------------------------
 
     def _on_change_password(self) -> None:
-
         if (self.document.file_path is None
                 or not self.document.file_path.exists()):
             QMessageBox.warning(
@@ -250,17 +238,22 @@ class SettingsDialog(QDialog):
             mode=PasswordMode.CHANGE,
             parent=self,
         )
-
         dialog.setWindowTitle("Change Document Password")
 
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
 
         try:
+            current_text = self.main_window.editor.toPlainText()
             self.document.change_password(
                 dialog.old_password(),
                 dialog.password(),
+                current_text=current_text,
             )
+            doc = self.main_window.editor.document()
+            if doc is not None:
+                doc.setModified(False)
+            self.main_window._update_title()
 
             QMessageBox.information(
                 self,
@@ -281,3 +274,4 @@ class SettingsDialog(QDialog):
                 "Error",
                 f"Failed to change password:\n{e}",
             )
+

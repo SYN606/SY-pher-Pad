@@ -2,9 +2,9 @@
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-v1.0.0-purple.svg)](https://github.com/SYN606/DarkCipher/releases/tag/v1.0.0)
-[![Issues](https://img.shields.io/github/issues/SYN606/DarkCipher/issues)](https://github.com/SYN606/DarkCipher/issues)
-[![Stars](https://img.shields.io/github/stars/SYN606/DarkCipher?style=social)](https://github.com/SYN606/DarkCipher/stargazers)
+[![Version](https://img.shields.io/badge/version-v1.1.0-purple.svg)](https://github.com/SYN606/SY-pher-Pad/releases/tag/v1.1.0)
+[![Issues](https://img.shields.io/github/issues/SYN606/SY-pher-Pad/issues)](https://github.com/SYN606/SY-pher-Pad/issues)
+[![Stars](https://img.shields.io/github/stars/SYN606/SY-pher-Pad?style=social)](https://github.com/SYN606/SY-pher-Pad/stargazers)
 | [![Developer](https://img.shields.io/badge/developer-SYN%20606-red.svg)](https://github.com/SYN606)
 
 **SY-pherPad** is a secure, encrypted desktop notepad application built with Python and PyQt6. It leverages robust **AES-256-GCM** authenticated encryption to protect your sensitive text documents seamlessly behind password-based security keys.
@@ -30,22 +30,22 @@ The core cryptographic architecture relies on modern key derivation functions, u
 
     ```bash
     git clone https://github.com/SYN606/SY-pher-Pad.git
-    cd DarkCipher
+    cd SY-pher-Pad
     ```
 
 2. (Optional) Create and activate a virtual environment:
 
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use
-    venv\Scripts\activate
+    uv venv
+    .venv\Scripts\activate
     ```
 
 3. Install dependencies:
 
     ```bash
-    pip install -r requirements.txt
+    uv sync
     ```
+
 
 ---
 
