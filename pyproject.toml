@@ -32,6 +32,7 @@ classifiers = [
 dependencies = [
     "cryptography>=45.0.7",
     "PyQt6>=6.10.0",
+    "pytest>=9.1.1",
 ]
 
 [project.optional-dependencies]

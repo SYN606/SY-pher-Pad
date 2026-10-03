@@ -16,19 +16,22 @@ def test_utils_pack_and_unpack():
     salt = generate_salt(16)
     key = derive_key_scrypt(b"testpass123", salt)
     plaintext = b"Hello, secure world!"
-    iv, ciphertext = encrypt(plaintext, key)
+    iv = os.urandom(12)
+    header = utils.create_header(utils.VERSION, utils.KDF_SCRYPT, iv, salt)
+    _, ciphertext = encrypt(plaintext, key, aad=header, iv=iv)
 
-    blob = utils.package(iv, salt, ciphertext, utils.KDF_SCRYPT)
+    blob = utils.package(header, ciphertext)
     assert isinstance(blob, str)
 
-    version, kdf, unpacked_iv, unpacked_salt, unpacked_ciphertext = utils.unpack(blob)
+    version, kdf, unpacked_iv, unpacked_salt, unpacked_ciphertext, unpacked_header = utils.unpack(blob)
     assert version == utils.VERSION
     assert kdf == utils.KDF_SCRYPT
     assert unpacked_iv == iv
     assert unpacked_salt == salt
     assert unpacked_ciphertext == ciphertext
+    assert unpacked_header == header
 
-    decrypted = decrypt(unpacked_iv, unpacked_ciphertext, key)
+    decrypted = decrypt(unpacked_iv, unpacked_ciphertext, key, aad=unpacked_header)
     assert decrypted == plaintext
 
 

@@ -5,9 +5,11 @@ from cryptography.exceptions import InvalidTag
 
 def encrypt(plaintext: bytes,
             key: bytes,
-            aad: bytes | None = None) -> tuple[bytes, bytes]:
+            aad: bytes | None = None,
+            iv: bytes | None = None) -> tuple[bytes, bytes]:
     """Encrypt bytes with AES-GCM. Returns (iv, ciphertext)."""
-    iv = os.urandom(12)  # recommended nonce size
+    if iv is None:
+        iv = os.urandom(12)  # recommended nonce size
     aesgcm = AESGCM(key)
     ciphertext = aesgcm.encrypt(iv, plaintext, aad)
     return iv, ciphertext

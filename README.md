@@ -15,16 +15,17 @@ The core cryptographic architecture relies on modern key derivation functions, u
 
 ## Features
 
-* **Authenticated Encryption:** Implements hardware-accelerated AES-256-GCM ensuring both confidentiality and tamper-proof data integrity.
-* **Strong Key Derivation:** Supports adaptive password hashing via `scrypt` (default) and `PBKDF2-HMAC-SHA256` using secure, cryptographically random salts (16-byte).
+* **Authenticated Encryption (AEAD):** Implements hardware-accelerated AES-256-GCM ensuring both confidentiality and tamper-proof data integrity. File metadata headers are intrinsically bound to the ciphertext as Associated Authenticated Data (AAD).
+* **Strong Key Derivation:** Supports adaptive password hashing via `scrypt` (default) and `PBKDF2-HMAC-SHA256` using secure, cryptographically random 16-byte salts.
+* **Atomic Save Operations:** Saves are performed atomically (writing to temp files before replacing), ensuring your documents are never corrupted in the event of a system crash or power loss.
 * **Native GUI Interface:** A clean, modern desktop editing environment managed via PyQt6.
-* **Find and Replace Subsystem:** Advanced, non-blocking modeless search utility supporting Wrap Around mapping, case-sensitivity switches, and global bulk text replacements.
-* **Dynamic Key Management:** Built-in settings interface allowing full document re-encryption when modifying or rotating document security keys.
-* **Self-Describing Formats:** Saves directly into a custom packaged `.dnote` binary format embedded with metadata tags describing the KDF engine used.
+* **Find and Replace Subsystem:** Advanced, non-blocking modeless search utility supporting wrap-around mapping, case-sensitivity switches, and global bulk text replacements.
+* **Dynamic Key Management:** Built-in settings interface allowing full document re-encryption when modifying or rotating document passphrases.
+* **Self-Describing Formats:** Saves directly into a custom packaged `.dnote` Base64 binary format embedded with metadata tags describing the KDF engine and encryption version used, ensuring forwards and backwards compatibility.
 
 ---
 
-## For Development
+## Installation & Setup
 
 1. Clone the repository:
 
@@ -33,10 +34,15 @@ The core cryptographic architecture relies on modern key derivation functions, u
     cd SY-pher-Pad
     ```
 
-2. (Optional) Create and activate a virtual environment:
+2. (Optional but recommended) Create and activate a virtual environment using `uv`:
 
     ```bash
     uv venv
+    
+    # On Linux/macOS:
+    source .venv/bin/activate
+    
+    # On Windows:
     .venv\Scripts\activate
     ```
 
@@ -46,30 +52,33 @@ The core cryptographic architecture relies on modern key derivation functions, u
     uv sync
     ```
 
-
 ---
 
 ## Usage
 
-**Encrypt a text or file:**
+**Launch the application:**
 
-This will run the GUI
+Start the secure GUI editor by running:
 
-```python
-python main.py
+```bash
+uv run main.py
+# or simply: python main.py
 ```
+
+Once opened, you can type your secret notes, hit `Ctrl+S`, and you will be prompted to set a secure password. The resulting `.dnote` file can safely be backed up to the cloud or sent over unsecured channels!
+
 ---
 
 ## Contributing
 
-Contributions, issues and feature requests are welcome!  
+Contributions, issues, and feature requests are welcome!  
 Please open an issue to discuss what you’d like to improve.
 
 ---
 
 ## Credits
 
-- Inspired by cryptography best practices and secure password-based encryption
+- Inspired by cryptography best practices and secure password-based encryption.
 - Contributors: [SYN606](https://github.com/SYN606)
 
 ---

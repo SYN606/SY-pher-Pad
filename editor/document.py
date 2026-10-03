@@ -55,11 +55,21 @@ class SecureDocument:
         password_bytes = active_password.encode("utf-8")
         salt = generate_salt(16)
         key = derive_key_scrypt(password_bytes, salt)
-        iv, ciphertext = encrypt(plaintext_bytes, key)
-        packed_data_str = utils.package(iv, salt, ciphertext, utils.KDF_SCRYPT)
+        
+        # AAD: authenticate the unencrypted header
+        iv = os.urandom(12)
+        header = utils.create_header(utils.VERSION, utils.KDF_SCRYPT, iv, salt)
+        
+        # Use our existing iv
+        _, ciphertext = encrypt(plaintext_bytes, key, aad=header, iv=iv)
+        packed_data_str = utils.package(header, ciphertext)
 
         self._atomic_write(packed_data_str.encode("utf-8"))
         self.current_password = active_password
+        
+        # Best effort cleanup
+        del password_bytes
+        del key
 
     def load_decrypted(self, password: str) -> str:
         """Parses salt metadata definitions from targeted paths to return decoded documents."""
@@ -67,7 +77,7 @@ class SecureDocument:
             raise FileNotFoundError("Target file does not exist.")
 
         packed_data_str = self.file_path.read_bytes().decode("utf-8")
-        _, kdf_type, iv, salt, ciphertext = utils.unpack(packed_data_str)
+        version, kdf_type, iv, salt, ciphertext, header = utils.unpack(packed_data_str)
         password_bytes = password.encode("utf-8")
 
         if kdf_type == utils.KDF_SCRYPT:
@@ -78,8 +88,16 @@ class SecureDocument:
         else:
             raise ValueError(f"Unsupported KDF format version: {kdf_type}")
 
-        plaintext_bytes = decrypt(iv, ciphertext, key)
+        # In version 1, there was no AAD. In version >= 2, AAD is the header.
+        aad = header if version >= 2 else None
+        
+        plaintext_bytes = decrypt(iv, ciphertext, key, aad=aad)
         self.current_password = password
+        
+        # Best effort cleanup
+        del password_bytes
+        del key
+        
         return plaintext_bytes.decode("utf-8")
 
     def change_password(self, old_password: str, new_password: str, current_text: str | None = None) -> None:
